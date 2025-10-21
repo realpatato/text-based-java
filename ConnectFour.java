@@ -61,10 +61,22 @@ public class ConnectFour {
         System.out.println();
     }
 
-    public static void newPiece(int col, int color) {
+    public static boolean newPiece(int col, int color) {
         for (int i = 0; i < board[col].length; i++) {
             if (board[col][i] != 0) {
-                break;
+                if (i == 0) {
+                    if (color == 1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (color == 1) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
             } else {
                 if (i > 0) {
                     board[col][i - 1] = 0;
@@ -77,6 +89,11 @@ public class ConnectFour {
                     e.printStackTrace();
                 }
             }
+        }
+        if (color == 1) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -94,13 +111,11 @@ public class ConnectFour {
             if (isPlayer1) {
                 System.out.print("Input Column: ");
                 int playerInput = input.nextInt() - 1;
-                newPiece(playerInput, 1);
-                isPlayer1 = false;
+                isPlayer1 = newPiece(playerInput, 1);
             } else {
                 System.out.print("Input Column: ");
                 int playerInput = input.nextInt() - 1;
-                newPiece(playerInput, 2);
-                isPlayer1 = true;
+                isPlayer1 = newPiece(playerInput, 2);
             }
             System.out.print("Continue Playing? [Y/N]: ");
             String kpQuestion = input.next().toLowerCase();
