@@ -23,7 +23,9 @@ public class ConnectFour {
 
     //clears the screen (allows for animation, and making it look nice nice)
     public static void clearScreen() {
+        //use escape keys to basically clear the terminal
         System.out.print("\033[H\033[2J");
+        //flushes the screen to ensure it updates
         System.out.flush();
     }
 
@@ -37,6 +39,7 @@ public class ConnectFour {
         System.out.print(COLORS[0] + str + COLORS[3]);
     }
 
+    //draws the board
     public static void drawBoard() {
         //clears the screen before drawing the board
         clearScreen();
@@ -61,15 +64,20 @@ public class ConnectFour {
         System.out.println();
     }
 
+    //handles adding a new piece to the board, returns boolean for player switching 
     public static boolean newPiece(int col, int color) {
+        //iterate over spot in the column
         for (int i = 0; i < board[col].length; i++) {
+            //if the spot doesn't equal 0, theres a piece already there
             if (board[col][i] != 0) {
+                //if i is 0 the column is full, don't switch the player
                 if (i == 0) {
                     if (color == 1) {
                         return true;
                     } else {
                         return false;
                     }
+                //i isn't 0 so swap the player
                 } else {
                     if (color == 1) {
                         return false;
@@ -78,11 +86,15 @@ public class ConnectFour {
                     }
                 }
             } else {
+                //check if i is greater than 0, if it isn't we don't and can't clear the spot before it
                 if (i > 0) {
                     board[col][i - 1] = 0;
                 }
+                //change the current spot
                 board[col][i] = color;
+                //draw the board
                 drawBoard();
+                //pause for half a second, in a try catch in case the thread is interupted
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -90,6 +102,7 @@ public class ConnectFour {
                 }
             }
         }
+        //if the loop ends (column was empty) swap players
         if (color == 1) {
             return false;
         } else {
