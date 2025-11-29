@@ -37,9 +37,6 @@ class Card {
     }
 
     public void topToScreen(int r, int c, Screen s) {
-        if (r == 0) {
-            s.lines[0] += "     " + c + "         ";
-        }
         s.lines[r * 2 + 1] += "O ------- O    ";
         s.lines[r * 2 + 2] += "| " + getFace() + getSuit() + "    | " + (r+1) + " ";
         if (r < 10) {
@@ -68,7 +65,15 @@ class Screen {
         }
     }
 
+    public void addTop() {
+        //adds the column numbers
+        for (int i = 0; i < 7; i++) {
+            lines[0] += "     " + (i + 1) + "         ";
+        }
+    }
+
     public void outputScreen() {
+        addTop();
         for (int i = 0; i < 38; i++) {
             if (lines[i].equals("") == false) {
                 System.out.println(lines[i]);
@@ -84,12 +89,11 @@ public class Solitaire {
         Card card1 = new Card(11, "C");
         Card card2 = new Card(13, "D");
         Card card3 = new Card(12, "S");
-        card3.topToScreen(0, 1, screen);
         card2.topToScreen(0, 0, screen);
         card1.topToScreen(1, 0, screen);
+        card3.topToScreen(0, 1, screen);
         card1.bottomToScreen(1, screen);
         card3.bottomToScreen(0, screen);
-        screen.outputScreen();
         screen.outputScreen();
     }
 }
