@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+class Random {
+    public static int randInt(int min, int max) {
+        //generates random number between given values, both values included
+        return (int)(Math.random() * (max - min + 1)) + min;
+    }
+}
+
 class Card {
     int val;
     String face, suit;
@@ -7,7 +14,7 @@ class Card {
 
     public Card(int v, String s) {
         val = v;
-        if (val > 1 && val < 10) {
+        if (val > 1 && val < 11) {
             face = String.valueOf(val);
         } else if (val == 1) {
             face = "A";
@@ -65,14 +72,38 @@ class Card {
     }
 }
 
+class Deck {
+    Card[] cards;
+
+    public Deck() {
+        cards = new Card[52];
+        String[] suits = {"C", "D", "H", "S"};
+        for (int si = 0; si < 4; si++) { //si = suit index
+            for (int v = 1; v < 14; v++) { //v = value
+                cards[(si * 13) + v - 1] = new Card(v, suits[si]);
+            }
+        }
+    }
+
+    public void shuffle() {
+        for (int i = 0; i < 1000; i++) {
+            int card1Index = Random.randInt(0, 51);
+            int card2Index = Random.randInt(0, 51);
+            Card temp = cards[card1Index];
+            cards[card1Index] = cards[card2Index];
+            cards[card2Index] = temp;
+        }
+    }
+}
+
 class Screen {
     String[] lines;
 
     public Screen() {
-        //This length is VERY specfic. This is the maximum amount of lines that could possibly be needed.
-        lines = new String[44];
+        //Shouldn't have any more lines than this
+        lines = new String[75];
         //Sets every value in the lines to be an empty string so the output looks good.
-        for (int i = 0; i < 44; i++) {
+        for (int i = 0; i < 75; i++) {
             lines[i] = "";
         }
     }
@@ -86,9 +117,10 @@ class Screen {
 
     public void outputScreen() {
         addTop();
-        for (int i = 0; i < 44; i++) {
+        for (int i = 0; i < 75; i++) {
             if (lines[i].equals("") == false) {
                 System.out.println(lines[i]);
+                //System.out.println(Random.randInt(0, 10));
                 lines[i] = "";
             }
         }
@@ -98,14 +130,8 @@ class Screen {
 public class Solitaire {
     public static void main(String args[]) {
         Screen screen = new Screen();
-        Card card1 = new Card(11, "C");
-        Card card2 = new Card(13, "D");
-        Card card3 = new Card(12, "S");
-        card3.topToScreen(0, 0, screen);
-        card2.topToScreen(0, 6, screen);
-        card3.bottomToScreen(0, 0, screen);
-        card1.topToScreen(1, 6, screen);
-        card1.bottomToScreen(1, 6, screen);
+        Deck deck = new Deck();
+        deck.shuffle();
         screen.outputScreen();
     }
 }
