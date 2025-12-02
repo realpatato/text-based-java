@@ -26,14 +26,18 @@ class Card {
             face = "K";
         }
         suit = s;
-        isHidden = false;
+        isHidden = true;
     }
 
     public String getFace() {
         if (isHidden) {
             return "? ";
         } 
-        return face + " ";
+        if (val == 10) {
+            return face;
+        } else {
+            return face + " ";
+        }
     }
 
     public String getSuit() {
@@ -41,6 +45,10 @@ class Card {
             return "? ";
         }
         return suit + " ";
+    }
+
+    public void flip() {
+        isHidden = !isHidden;
     }
 
     public void topToScreen(int r, int c, Screen s) {
@@ -51,9 +59,14 @@ class Card {
             }
         }
         s.lines[r * 2 + 1] += "O ------- O    ";
-        s.lines[r * 2 + 2] += "| " + getFace() + getSuit() + "    | " + (r + 1) + " ";
-        if (r < 9) {
-            s.lines[r * 2 + 2] += " ";
+        s.lines[r * 2 + 2] += "| " + getFace() + getSuit() + "    | ";
+        if (!isHidden) {
+            s.lines[r * 2 + 2] += (r + 1) + " ";
+            if (r < 9) {
+                s.lines[r * 2 + 2] += " ";
+            }
+        } else {
+            s.lines[r * 2 + 2] += "X  ";
         }
     }
 
@@ -94,9 +107,46 @@ class Deck {
             cards[card2Index] = temp;
         }
     }
+
+    public Card[] deal(Card[] s) {
+        Card[] td = new Card[cards.length - 1]; //temp deck
+        Card[] ts = new Card[s.length + 1]; //temp stack
+        for (int i = 1; i < cards.length; i++) {
+            td[i - 1] = cards[i];
+        }
+        for (int i = 0; i < s.length; i++) {
+            ts[i] = s[i];
+        } 
+        ts[ts.length - 1] = cards[0];
+        cards = td;
+        return ts;
+    }
 }
 
-class Screen {
+class Stack {
+    Card[] stack;
+    int col;
+
+    public Stack(Deck d, int c) {
+        stack = new Card[0];
+        col = c;
+        for (int i = 0; i < c + 1; i++) {
+            stack = d.deal(stack);
+        }
+        stack[stack.length - 1].isHidden = false;
+    }
+
+    public void stackToScreen(Screen s) {
+        for (int i = 0; i < stack.length; i++) {
+            stack[i].topToScreen(i, col, s);
+            if (i == stack.length - 1) {
+                stack[i].bottomToScreen(i, col, s);
+            }
+        }
+    }
+}
+
+class Screen { //class for the screen (holds all of the text)
     String[] lines;
 
     public Screen() {
@@ -120,7 +170,6 @@ class Screen {
         for (int i = 0; i < 75; i++) {
             if (lines[i].equals("") == false) {
                 System.out.println(lines[i]);
-                //System.out.println(Random.randInt(0, 10));
                 lines[i] = "";
             }
         }
@@ -132,6 +181,20 @@ public class Solitaire {
         Screen screen = new Screen();
         Deck deck = new Deck();
         deck.shuffle();
+        Stack stack1 = new Stack(deck, 0);
+        Stack stack2 = new Stack(deck, 1);
+        Stack stack3 = new Stack(deck, 2);
+        Stack stack4 = new Stack(deck, 3);
+        Stack stack5 = new Stack(deck, 4);
+        Stack stack6 = new Stack(deck, 5);
+        Stack stack7 = new Stack(deck, 6);
+        stack1.stackToScreen(screen);
+        stack2.stackToScreen(screen);
+        stack3.stackToScreen(screen);
+        stack4.stackToScreen(screen);
+        stack5.stackToScreen(screen);
+        stack6.stackToScreen(screen);
+        stack7.stackToScreen(screen);
         screen.outputScreen();
     }
 }
