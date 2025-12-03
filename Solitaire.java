@@ -90,7 +90,8 @@ class Deck {
 
     public Deck() {
         cards = new Card[52];
-        String[] suits = {"C", "D", "H", "S"};
+        //the weird looking parts of the strings are color codes 
+        String[] suits = {"\u001B[37mC\u001b[0m", "\u001b[31mD\u001b[0m", "\u001B[31mH\u001b[0m", "\u001B[37mS\u001b[0m"};
         for (int si = 0; si < 4; si++) { //si = suit index
             for (int v = 1; v < 14; v++) { //v = value
                 cards[(si * 13) + v - 1] = new Card(v, suits[si]);
@@ -146,6 +147,23 @@ class Stack {
     }
 }
 
+class Table {
+    Stack[] ts; //table stacks
+
+    public Table(Deck d) {
+        ts = new Stack[7];
+        for (int i = 0; i < 7; i++) {
+            ts[i] = new Stack(d, i);
+        }
+    }
+
+    public void tableToScreen(Screen s) {
+        for (int i = 0; i < 7; i++) {
+            ts[i].stackToScreen(s);
+        }
+    }
+}
+
 class Screen { //class for the screen (holds all of the text)
     String[] lines;
 
@@ -181,20 +199,8 @@ public class Solitaire {
         Screen screen = new Screen();
         Deck deck = new Deck();
         deck.shuffle();
-        Stack stack1 = new Stack(deck, 0);
-        Stack stack2 = new Stack(deck, 1);
-        Stack stack3 = new Stack(deck, 2);
-        Stack stack4 = new Stack(deck, 3);
-        Stack stack5 = new Stack(deck, 4);
-        Stack stack6 = new Stack(deck, 5);
-        Stack stack7 = new Stack(deck, 6);
-        stack1.stackToScreen(screen);
-        stack2.stackToScreen(screen);
-        stack3.stackToScreen(screen);
-        stack4.stackToScreen(screen);
-        stack5.stackToScreen(screen);
-        stack6.stackToScreen(screen);
-        stack7.stackToScreen(screen);
+        Table table = new Table(deck);
+        table.tableToScreen(screen);
         screen.outputScreen();
     }
 }
