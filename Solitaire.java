@@ -52,36 +52,65 @@ class Card {
     }
 
     public void topToScreen(int r, int c, Screen s) {
-        for (int ra = 1; ra < 3; ra++) { //ra = "row additive"
-            int sc = (15 * c - s.lines[r * 2 + ra].length()) / 15; //sc = "skipped columns"
-            for (int cc = 0; cc < sc; cc++) { //cc = "current column"
-                s.lines[r * 2 + ra] += "               ";
+        if (r != -1) { //-1 means its part of top
+            for (int ra = 9; ra < 11; ra++) { //ra = "row additive"
+                int sc = (15 * c - s.lines[r * 2 + ra].length()) / 15; //sc = "skipped columns"
+                for (int cc = 0; cc < sc; cc++) { //cc = "current column"
+                    s.lines[r * 2 + ra] += "               ";
+                }
             }
-        }
-        s.lines[r * 2 + 1] += "O ------- O    ";
-        s.lines[r * 2 + 2] += "| " + getFace() + getSuit() + "    | ";
-        if (!isHidden) {
-            s.lines[r * 2 + 2] += (r + 1) + " ";
-            if (r < 9) {
-                s.lines[r * 2 + 2] += " ";
+            s.lines[r * 2 + 9] += "O ------- O    ";
+            s.lines[r * 2 + 10] += "| " + getFace() + getSuit() + "    | ";
+            if (!isHidden) {
+                s.lines[r * 2 + 10] += (r + 1) + " ";
+                if (r < 9) {
+                    s.lines[r * 2 + 10] += " ";
+                }
+            } else {
+            s.lines[r * 2 + 10] += "X  ";
             }
         } else {
-            s.lines[r * 2 + 2] += "X  ";
+            if (c == 4) {
+                int ss = 45 - s.lines[0].length(); //ss = "skipped spaces"
+                for (int cs = 0; cs < ss; cs++) { //cs = "current space"
+                    for (int cr = 0; cr < 2; cr++) { //cr = "current row"
+                        s.lines[cr] += " ";
+                    }
+                }
+            }
+            s.lines[0] += "O ------- O    ";
+            s.lines[1] += "| " + getFace() + getSuit() + "    |    ";
         }
     }
 
     public void bottomToScreen(int r, int c, Screen s) {
-        for (int ra = 3; ra < 8; ra++) { //ra = "row additive"
-            int sc = (15 * c - s.lines[r * 2 + ra].length()) / 15; //sc = "skipped columns"
-            for (int cc = 0; cc < sc; cc++) { //cc = "current column"
-                s.lines[r * 2 + ra] += "               ";
+        if (r != -1) {
+            for (int ra = 11; ra < 16; ra++) { //ra = "row additive"
+                int sc = (15 * c - s.lines[r * 2 + ra].length()) / 15; //sc = "skipped columns"
+                for (int cc = 0; cc < sc; cc++) { //cc = "current column"
+                    s.lines[r * 2 + ra] += "               ";
+                }
             }
+            s.lines[r * 2 + 11] += "|         |    ";
+            s.lines[r * 2 + 12] += "|         |    ";
+            s.lines[r * 2 + 13] += "|         |    ";
+            s.lines[r * 2 + 14] += "|     " + getFace() + getSuit() +"|    ";
+            s.lines[r * 2 + 15] += "O ------- O    ";
+        } else {
+            if (c == 4) {
+                int ss = 45 - s.lines[3].length(); //ss = "skipped spaces"
+                for (int cs = 0; cs < ss; cs++) { //cs = "current space"
+                    for (int cr = 3; cr < 7; cr++) { //cr = "current row"
+                        s.lines[cr] += " ";
+                    }
+                }
+            }
+            s.lines[2] += "|         |    ";
+            s.lines[3] += "|         |    ";
+            s.lines[4] += "|         |    ";
+            s.lines[5] += "|     " + getFace() + getSuit() +"|    ";
+            s.lines[6] += "O ------- O    ";
         }
-        s.lines[r * 2 + 3] += "|         |    ";
-        s.lines[r * 2 + 4] += "|         |    ";
-        s.lines[r * 2 + 5] += "|         |    ";
-        s.lines[r * 2 + 6] += "|     " + getFace() + getSuit() +"|    ";
-        s.lines[r * 2 + 7] += "O ------- O    ";
     }
 }
 
@@ -164,6 +193,64 @@ class Table {
     }
 }
 
+class Tower {
+    Card[] tower;
+    int col;
+    String suit;
+
+    public Tower(int c) {
+        tower = new Card[0];
+        col = c + 4;
+        String[] suits = {"\u001B[37mC\u001b[0m", "\u001b[31mD\u001b[0m", "\u001B[31mH\u001b[0m", "\u001B[37mS\u001b[0m"};
+        suit = suits[c];
+    }
+
+    public void towerToScreen(Screen s) {
+        if (tower.length > 0) {
+            tower[tower.length - 1].topToScreen(-1, col, s);
+            tower[tower.length - 1].bottomToScreen(-1, col, s);
+        } else {
+            if (col == 4) {
+                int ss = 45 - s.lines[0].length(); //ss = "skipped spaces"
+                for (int cs = 0; cs < ss; cs++) { //cs = "current space"
+                    for (int cr = 0; cr < 7; cr++) { //cr = "current row"
+                        s.lines[cr] += " ";
+                    }
+                }
+            }
+            s.lines[0] += "O ------- O    ";
+            s.lines[1] += "|         |    ";
+            s.lines[2] += "|         |    ";
+            s.lines[3] += "|    " + suit + "    |    ";
+            s.lines[4] += "|         |    ";
+            s.lines[5] += "|         |    ";
+            s.lines[6] += "O ------- O    ";
+        }
+    }
+}
+
+class Header {
+    Tower[] towers;
+
+    public Header() {
+        towers = new Tower[4];
+        for (int c = 0; c < 4; c++) {
+            towers[c] = new Tower(c);
+        }
+    }
+
+    public void headerToScreen(Screen s) {
+        s.lines[7] += "                                             ";
+        for (int i = 0; i < 4; i++) {
+            towers[i].towerToScreen(s);
+            s.lines[7] += "     " + (i + 1) + "         ";
+        }
+        for (int i = 0; i < 7; i++) {
+            s.lines[8] += "     " + (i + 1) + "         ";
+        }
+    }
+}
+
 class Screen { //class for the screen (holds all of the text)
     String[] lines;
 
@@ -179,12 +266,12 @@ class Screen { //class for the screen (holds all of the text)
     public void addTop() {
         //adds the column numbers
         for (int i = 0; i < 7; i++) {
-            lines[0] += "     " + (i + 1) + "         ";
+            lines[7] += "     " + (i + 1) + "         ";
         }
     }
 
     public void outputScreen() {
-        addTop();
+        //addTop();
         for (int i = 0; i < 75; i++) {
             if (lines[i].equals("") == false) {
                 System.out.println(lines[i]);
@@ -201,6 +288,8 @@ public class Solitaire {
         deck.shuffle();
         Table table = new Table(deck);
         table.tableToScreen(screen);
+        Header header = new Header();
+        header.headerToScreen(screen);
         screen.outputScreen();
     }
 }
