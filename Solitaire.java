@@ -151,6 +151,20 @@ class Deck {
         cards = td;
         return ts;
     }
+
+    public void deckToScreen(Screen s) {
+        s.lines[0] += "O ------- O    ";
+        s.lines[1] += "|         |    ";
+        s.lines[2] += "|         |    ";
+        if (cards.length > 0) {
+            s.lines[3] += "|    ?    |    ";
+        } else {
+            s.lines[3] += "|    X    |    ";
+        }
+        s.lines[4] += "|         |    ";
+        s.lines[5] += "|         |    ";
+        s.lines[6] += "O ------- O    ";
+    }
 }
 
 class Stack {
@@ -219,7 +233,12 @@ class Tower {
                 }
             }
             s.lines[0] += "O ------- O    ";
-            s.lines[1] += "|         |    ";
+            s.lines[1] += "|         | ";
+            if (suit.equals("\u001B[37mS\u001b[0m")) {
+                s.lines[1] += "0  ";
+            } else {
+                s.lines[1] += "   ";
+            }
             s.lines[2] += "|         |    ";
             s.lines[3] += "|    " + suit + "    |    ";
             s.lines[4] += "|         |    ";
@@ -231,19 +250,20 @@ class Tower {
 
 class Header {
     Tower[] towers;
+    Deck deck;
 
-    public Header() {
+    public Header(Deck d) {
         towers = new Tower[4];
         for (int c = 0; c < 4; c++) {
             towers[c] = new Tower(c);
         }
+        deck = d;
     }
 
     public void headerToScreen(Screen s) {
-        s.lines[7] += "                                             ";
+        deck.deckToScreen(s);
         for (int i = 0; i < 4; i++) {
             towers[i].towerToScreen(s);
-            s.lines[7] += "     " + (i + 1) + "         ";
         }
         for (int i = 0; i < 7; i++) {
             s.lines[8] += "     " + (i + 1) + "         ";
@@ -263,15 +283,7 @@ class Screen { //class for the screen (holds all of the text)
         }
     }
 
-    public void addTop() {
-        //adds the column numbers
-        for (int i = 0; i < 7; i++) {
-            lines[7] += "     " + (i + 1) + "         ";
-        }
-    }
-
     public void outputScreen() {
-        //addTop();
         for (int i = 0; i < 75; i++) {
             if (lines[i].equals("") == false) {
                 System.out.println(lines[i]);
@@ -288,8 +300,17 @@ public class Solitaire {
         deck.shuffle();
         Table table = new Table(deck);
         table.tableToScreen(screen);
-        Header header = new Header();
+        Header header = new Header(deck);
         header.headerToScreen(screen);
         screen.outputScreen();
+        /*
+        O ----O ----O ------- O    
+        | A C | A C | A C     |
+        |     |     |         |
+        |     |     |         |
+        |     |     |         |
+        |     |     |     A C |
+        O ----O ----O ------- O   
+        */
     }
 }
