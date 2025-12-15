@@ -78,8 +78,13 @@ class Card {
                     }
                 }
             }
-            s.lines[0] += "O ------- O    ";
-            s.lines[1] += "| " + getFace() + getSuit() + "    |    ";
+            s.lines[0] += "O ------- O";
+            s.lines[1] += "| " + getFace() + getSuit() + "    |";
+            if (c != 2) {
+                for (int i = 0; i < 2; i++) {
+                    s.lines[i] += "    ";
+                }
+            }
         }
     }
 
@@ -105,11 +110,16 @@ class Card {
                     }
                 }
             }
-            s.lines[2] += "|         |    ";
-            s.lines[3] += "|         |    ";
-            s.lines[4] += "|         |    ";
-            s.lines[5] += "|     " + getFace() + getSuit() +"|    ";
-            s.lines[6] += "O ------- O    ";
+            s.lines[2] += "|         |";
+            s.lines[3] += "|         |";
+            s.lines[4] += "|         |";
+            s.lines[5] += "|     " + getFace() + getSuit() +"|";
+            s.lines[6] += "O ------- O";
+            if (c != 2) {
+                for (int i = 2; i < 7; i++) {
+                    s.lines[i] += "    ";
+                }
+            }
         }
     }
 }
@@ -164,6 +174,52 @@ class Deck {
         s.lines[4] += "|         |    ";
         s.lines[5] += "|         |    ";
         s.lines[6] += "O ------- O    ";
+    }
+}
+
+class Waste {
+    Card[] cards;
+
+    public Waste() {
+        cards = new Card[0];
+    }
+
+    public void draw(Deck d) {
+        for (int i = 0; i < 3; i++) {
+            cards = d.deal(cards);
+        }
+        for (Card c : cards) {
+            c.isHidden = false;
+        }
+    }
+
+    public void wasteToScreen(Screen s) {
+        if (cards.length > 0) {
+            for (int i = cards.length - 1; i >= 0 ; i--) {
+                if (i == cards.length - 1) {
+                    cards[i].topToScreen(-1, 2, s);
+                    cards[i].bottomToScreen(-1, 2, s);
+                } else if (i >= cards.length - 3) {
+                    s.lines[0] += "---- O";
+                    s.lines[1] += "     |";
+                    s.lines[2] += "     |";
+                    s.lines[3] += "     |";
+                    s.lines[4] += "     |";
+                    s.lines[5] += " " + cards[i].getFace() + cards[i].getSuit() + "|";
+                    s.lines[6] += "---- O";
+                } else {
+                    break;
+                }
+            }
+        } else {
+            s.lines[0] += "O ------- O    ";
+            s.lines[1] += "|         |    ";
+            s.lines[2] += "|         |    ";
+            s.lines[3] += "|    X    |    ";
+            s.lines[4] += "|         |    ";
+            s.lines[5] += "|         |    ";
+            s.lines[6] += "O ------- O    ";
+        }
     }
 }
 
@@ -250,6 +306,7 @@ class Tower {
 
 class Header {
     Tower[] towers;
+    Waste waste;
     Deck deck;
 
     public Header(Deck d) {
@@ -258,10 +315,13 @@ class Header {
             towers[c] = new Tower(c);
         }
         deck = d;
+        waste = new Waste();
+        waste.draw(deck);
     }
 
     public void headerToScreen(Screen s) {
         deck.deckToScreen(s);
+        waste.wasteToScreen(s);
         for (int i = 0; i < 4; i++) {
             towers[i].towerToScreen(s);
         }
@@ -303,14 +363,5 @@ public class Solitaire {
         Header header = new Header(deck);
         header.headerToScreen(screen);
         screen.outputScreen();
-        /*
-        O ----O ----O ------- O    
-        | A C | A C | A C     |
-        |     |     |         |
-        |     |     |         |
-        |     |     |         |
-        |     |     |     A C |
-        O ----O ----O ------- O   
-        */
     }
 }
