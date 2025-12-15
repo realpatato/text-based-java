@@ -8,46 +8,52 @@ class Random {
 }
 
 class Card {
-    int val;
-    String face, suit;
-    boolean isHidden;
+    /* Class for the card object */
+    int val; //the actual value of the card
+    String face, suit; //face = the value the user can see, suit is the suit of the card
+    boolean isHidden; //whether or not the card is hidden
 
     public Card(int v, String s) {
-        val = v;
-        if (val > 1 && val < 11) {
+        /* Instantiation of a card object */
+        val = v; //the value is the number inputted
+        //V determining the face value of the card
+        if (val > 1 && val < 11) { //if the card isn't an ace, a king, a queen, or a jack (1, 11, 12, 13) the value and face value are the same
             face = String.valueOf(val);
-        } else if (val == 1) {
+        } else if (val == 1) { //the face value is "A" for an ace
             face = "A";
-        } else if (val == 11) {
+        } else if (val == 11) { //the face value is "J" for a jack
             face = "J";
-        } else if (val == 12) {
+        } else if (val == 12) { //the face value is "Q" for a queen
             face = "Q";
-        } else {
+        } else { //if the value isn't any of the aforementioned values, it is a "K", or a king
             face = "K";
         }
-        suit = s;
-        isHidden = true;
+        suit = s; //the suit of the card that was inputted is stored
+        isHidden = true; //cards default to being hidden
     }
 
     public String getFace() {
-        if (isHidden) {
+        /* Returns the face value depending on if the card is hidden or not */
+        if (isHidden) { //the card is hidden, so we return a "?"
             return "? ";
         } 
-        if (val == 10) {
+        if (val == 10) { //if the value is 10, the text would mess up the display of the card, so we don't add a space like the others
             return face;
-        } else {
+        } else { //adds a space and returns the face value
             return face + " ";
         }
     }
 
     public String getSuit() {
-        if (isHidden) {
+        /* Returns the suit of the card based on if it is hidden or not */
+        if (isHidden) { //the card is hidden, so we return a "?"
             return "? ";
         }
-        return suit + " ";
+        return suit + " "; //return the suit with a space
     }
 
-    public void flip() {
+    public void flip() { 
+        /* Reverses if the card is hidden or not */
         isHidden = !isHidden;
     }
 
@@ -200,13 +206,13 @@ class Waste {
                     cards[i].topToScreen(-1, 2, s);
                     cards[i].bottomToScreen(-1, 2, s);
                 } else if (i >= cards.length - 3) {
-                    s.lines[0] += "---- O";
-                    s.lines[1] += "     |";
-                    s.lines[2] += "     |";
-                    s.lines[3] += "     |";
-                    s.lines[4] += "     |";
-                    s.lines[5] += " " + cards[i].getFace() + cards[i].getSuit() + "|";
-                    s.lines[6] += "---- O";
+                    s.lines[0] += "--- O";
+                    s.lines[1] += "    |";
+                    s.lines[2] += "    |";
+                    s.lines[3] += "    |";
+                    s.lines[4] += "    |";
+                    s.lines[5] += cards[i].getFace() + cards[i].getSuit() + "|";
+                    s.lines[6] += "--- O";
                 } else {
                     break;
                 }
